@@ -28,6 +28,18 @@ class PositionCityResponse(BaseModel):
     psm: float
     district: str
 
+    class Config:
+        allow_population_by_field_name = True
+        schema_extra = {
+            "coords": {
+                "lat": "59.871658",
+                "lng": "30.410038"
+                },
+            "address": "Софийская ул., 40К2",
+            "psm": 555.5555555555555,
+            "district": "Фрунзенский"
+        }
+
 
 class FlatDBEntity(BaseModel):
     city1: str
@@ -39,3 +51,4 @@ class FlatDBEntity(BaseModel):
     params: dict
     psm: float
     district: str
+    area: float

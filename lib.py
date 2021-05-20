@@ -3,10 +3,21 @@ import json
 import aiohttp
 from aiohttp.typedefs import LooseHeaders
 
+import pandas as pd
+import numpy as np
+
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
 
+import shortuuid
+
+# TODO: Put it all to settings
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
@@ -19,6 +30,11 @@ API_URL = 'https://ads-api.ru/main/api'
 AUTHORIZED_API_URL = f'{API_URL}?user={MAIL}&token={ADS_TOKEN}&param[2313]'
 
 DISTRICT_API_URL = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/geolocate/address?'
+
+Y_LABEL_MAPPING = {
+    "psm": "Цена за квадратный метр (руб/кв.метр)",
+    "area": "Метраж (кв метров)"
+}
 
 
 def set_values(url, **kwargs):
@@ -61,3 +77,19 @@ async def get_district(lat, lng):
             return json.loads(text).get('suggestions')[0].get('data').get('city_district')
 
 
+def create_hist(data, city_name:str, field_name: str):
+    hist_path = f'tmp/{shortuuid.uuid()}.png'  # sttings.TMP_PATH / "{shortuuid.uuid()}.png"
+
+    plt.figure(figsize=(10,10))
+    plt.bar(list(data.keys()), data.values(), color='#607c8e')
+
+    plt.title(f'Цена съема жилья на квадратный метр в городе {city_name}')
+    plt.xlabel('Районы')
+    
+    plt.ylabel(Y_LABEL_MAPPING[field_name])
+
+    plt.tick_params(axis='x', rotation=40)
+    plt.tight_layout()
+    
+    plt.savefig(hist_path)
+    return hist_path
