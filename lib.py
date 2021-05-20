@@ -42,7 +42,6 @@ async def make_request(data):
 
 
 async def get_district(lat, lng):
-    # token = "51a63a5829075787c1a7079fa79e4a3a0ce2f2a9"
     # dadata = Dadata(token)
     # # result = dadata.suggest("address", "Ленинский пр-т, 117к1")
     # result = dadata.geolocate(name="address", count=1, lat=59.851358, lon=30.252923)

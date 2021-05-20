@@ -15,6 +15,15 @@ def get_all_districts(collection):
 
 
 def get_district_average_psm_mapping(collection):
-    return list(collection.aggregate([{'$group': {'_id': {'district': '$district'}, 'psm_avg': {'$avg': '$psm'}}}]))
+    district_average_psm_map = dict()
+
+    cursor = collection.aggregate([{'$group': {'_id': {'district': '$district'}, 'psm_avg': {'$avg': '$psm'}}}])
+    
+    for cur in cursor:
+        print(cur)
+        district_average_psm_map[cur['_id']['district']] = cur['psm_avg']
+    
+    return district_average_psm_map
+
     
 
