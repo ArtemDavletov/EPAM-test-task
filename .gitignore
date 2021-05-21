@@ -17,4 +17,4 @@ venv2
 */.env
 
 # Histograms
-tmp/*.png
+tmp/*

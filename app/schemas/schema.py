@@ -17,6 +17,10 @@ class ParseCityRequest(BaseModel):
         }
 
 
+class ParseCity(ParseCityRequest):
+    ...
+
+
 class Coord(BaseModel):
     lat: str
     lng: str

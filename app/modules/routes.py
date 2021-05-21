@@ -1,4 +1,5 @@
-from logging import getLogger
+import asyncio
+import os
 
 import folium
 from fastapi import APIRouter, HTTPException
@@ -6,14 +7,14 @@ from fastapi.responses import FileResponse, HTMLResponse
 from folium.plugins import HeatMap
 from pymongo import MongoClient
 
-from app.lib.lib import make_request, get_district, create_hist
+from app.lib.lib import make_request, get_district, create_hist, background_parsing
 from app.lib.mongo import get_collection, get_district_average_field_mapping, get_coords
 from app.schemas.schema import ParseCityRequest, FlatDBEntity, PositionCityResponse
+from app.settings.paths import TMP_PATH
 from app.settings.settings import Settings
 from app.utils.utils import JSONEncoder, count_psm, extract_area, prepare_coords_data
 
 settings = Settings()
-logging = getLogger(__name__)
 
 router = APIRouter()
 client: MongoClient = MongoClient(settings.DB_URL)
@@ -22,6 +23,19 @@ client: MongoClient = MongoClient(settings.DB_URL)
 @router.get("/")
 def root():
     return 'success'
+
+
+@router.on_event("startup")
+async def start_background_parsing():
+    asyncio.create_task(background_parsing(client))
+
+
+@router.on_event("startup")
+async def create_city_dirs_tmp():
+    for city in settings.DEFAULT_CITIES:
+        path = TMP_PATH / city
+        if not path.exists():
+            os.mkdir(path)
 
 
 @router.post(
@@ -101,7 +115,7 @@ async def heatmap(
 
     coords_list = list(map(lambda flat: prepare_coords_data(flat), result))
 
-    m = folium.Map([59.6, 30.2], tiles="stamentoner", zoom_start=6)
+    m = folium.Map([59.6, 30.2], tiles="stamentoner", zoom_start=6)  # settings.COORDS[city_name]
 
     HeatMap(coords_list).add_to(m)
 

@@ -11,7 +11,10 @@ def get_db(client: MongoClient):
 
 def get_collection(client: MongoClient, collection_name: str):
     db = get_db(client)
-    return db[collection_name]
+    collection = db[collection_name]
+    if not [index['name'] for index in collection.list_indexes()]:
+        collection.create_index("district")
+    return collection
 
 
 def get_all_districts(collection):

@@ -10,5 +10,7 @@ app = FastAPI()
 
 app.include_router(router)
 
+# TODO: Add indexes, add dockerfile, autoparsing
+
 if __name__ == "__main__":
     uvicorn.run(app, host=settings.APP_HOST, port=settings.APP_PORT, debug=settings.DEBUG)

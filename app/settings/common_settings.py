@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from pydantic import BaseSettings
 
 
@@ -11,3 +13,6 @@ class CommonSettings(BaseSettings):
 
     DB_NAME: str = "ads"
     DB_URL: str = "mongodb://localhost:27018/"
+
+    DEFAULT_CITIES = ("Санкт-Петербург", "Москва", "Екатеринбург")
+    PARSE_PERIOD: int = 5*60
