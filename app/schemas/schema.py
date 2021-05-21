@@ -12,7 +12,7 @@ class ParseCityRequest(BaseModel):
             "example": {
                 "city_name": "Санкт-Петербург",
                 "date_from": "2021-05-12+00:00:00",
-                "date_to": "2021-05-12+01:00:00"
+                "date_to": "2021-05-12+01:00:00",
             }
         }
 
@@ -35,13 +35,10 @@ class PositionCityResponse(BaseModel):
     class Config:
         allow_population_by_field_name = True
         schema_extra = {
-            "coords": {
-                "lat": "59.871658",
-                "lng": "30.410038"
-            },
+            "coords": {"lat": "59.871658", "lng": "30.410038"},
             "address": "Софийская ул., 40К2",
             "psm": 555.5555555555555,
-            "district": "Фрунзенский"
+            "district": "Фрунзенский",
         }
 
 

@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from pydantic import BaseSettings
 
 
@@ -15,4 +13,9 @@ class CommonSettings(BaseSettings):
     DB_URL: str = "mongodb://localhost:27018/"
 
     DEFAULT_CITIES = ("Санкт-Петербург", "Москва", "Екатеринбург")
-    PARSE_PERIOD: int = 5*60
+    PARSE_PERIOD: int = 5 * 60
+    COORDS = {
+        "Санкт-Петербург": [59.6, 30.2],
+        "Москва": [55.5, 37.4],
+        "Екатеринбург": [56.5, 60.35],
+    }
