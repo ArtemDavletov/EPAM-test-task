@@ -13,8 +13,10 @@ class JSONEncoder(json.JSONEncoder):
 def count_psm(flat: dict) -> float:
     return float(flat['price']) / float(flat['params']['Площадь'])
 
+
 def extract_area(flat: dict) -> float:
     return float(flat['params']['Площадь'])
+
 
 def prepare_coords_data(data, field: str = 'psm'):
     return [*data['coords'].values(), data[field]]

@@ -1,8 +1,12 @@
 from pymongo import MongoClient
 
+from app.settings.settings import Settings
+
+settings = Settings()
+
 
 def get_db(client: MongoClient):
-    return client['ads']  # setting.DB_NAME
+    return client[settings.DB_NAME]
 
 
 def get_collection(client: MongoClient, collection_name: str):
@@ -18,12 +22,12 @@ def get_district_average_field_mapping(collection, field: str = "psm"):
     district_average_field_map = dict()
 
     cursor = collection.aggregate([{'$group': {'_id': {'district': '$district'}, 'psm_avg': {'$avg': f'${field}'}}}])
-    
+
     for cur in cursor:
-        print(cur)
         district_average_field_map[cur['_id']['district']] = cur['psm_avg']
-    
+
     return district_average_field_map
+
 
 def get_coords(collection, city_name: str):
     return collection.find({"city1": city_name}, {"coords": {"lat": 1, "lng": 1}, "psm": 1})

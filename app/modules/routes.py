@@ -1,18 +1,22 @@
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse
-from pymongo import MongoClient
-from geojson import Point, utils
+from logging import getLogger
 
 import folium
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse, HTMLResponse
 from folium.plugins import HeatMap
+from pymongo import MongoClient
 
-from lib import make_request, get_district, create_hist
-from mongo import get_collection, get_district_average_field_mapping, get_coords
-from schema import ParseCityRequest, FlatDBEntity, PositionCityResponse
-from utils import JSONEncoder, count_psm, extract_area, prepare_coords_data
+from app.lib.lib import make_request, get_district, create_hist
+from app.lib.mongo import get_collection, get_district_average_field_mapping, get_coords
+from app.schemas.schema import ParseCityRequest, FlatDBEntity, PositionCityResponse
+from app.settings.settings import Settings
+from app.utils.utils import JSONEncoder, count_psm, extract_area, prepare_coords_data
+
+settings = Settings()
+logging = getLogger(__name__)
 
 router = APIRouter()
-client: MongoClient = MongoClient('mongodb://localhost:27018/')
+client: MongoClient = MongoClient(settings.DB_URL)
 
 
 @router.get("/")
@@ -33,9 +37,10 @@ async def parse(
     response = []
     for flat in data:
         district = await get_district(**flat.get('coords'))
-        
+
         if district is not None:
-            response.append(collection.insert(FlatDBEntity(**flat, psm=count_psm(flat), district=district, area=extract_area(flat)).dict()))
+            response.append(collection.insert(
+                FlatDBEntity(**flat, psm=count_psm(flat), district=district, area=extract_area(flat)).dict()))
 
     return JSONEncoder().encode(response)
 
@@ -56,12 +61,12 @@ async def positions(
     "/average/{city_name}/{field_name}"
 )
 async def get_average(
-    city_name: str,
-    field_name: str
+        city_name: str,
+        field_name: str
 ):
     if field_name not in ("psm", "area"):
         raise HTTPException(status_code=404, detail='Field is not supported. Use one of ("psm", "area")')
-    
+
     collection = get_collection(client=client, collection_name=city_name)
     result = get_district_average_field_mapping(collection=collection, field=field_name)
     return result
@@ -71,8 +76,8 @@ async def get_average(
     "/build_hist/{city_name}/{field_name}"
 )
 async def build_hist(
-    city_name: str,
-    field_name: str
+        city_name: str,
+        field_name: str
 ):
     if field_name not in ("psm", "area"):
         raise HTTPException(status_code=404, detail='Field is not supported. Use one of ("psm", "area")')
@@ -89,7 +94,7 @@ async def build_hist(
     "/heatmap"
 )
 async def heatmap(
-    city_name: str
+        city_name: str
 ):
     collection = get_collection(client=client, collection_name=city_name)
     result = get_coords(collection, city_name)

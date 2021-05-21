@@ -34,7 +34,7 @@ class PositionCityResponse(BaseModel):
             "coords": {
                 "lat": "59.871658",
                 "lng": "30.410038"
-                },
+            },
             "address": "Софийская ул., 40К2",
             "psm": 555.5555555555555,
             "district": "Фрунзенский"
