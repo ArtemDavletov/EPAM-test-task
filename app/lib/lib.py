@@ -13,17 +13,6 @@ import matplotlib.pyplot as plt
 
 import shortuuid
 
-# MAIL = 'Tomas-Cooper@mail.ru'
-#
-# API_URL = 'https://ads-api.ru/main/api'
-# AUTHORIZED_API_URL = f'{API_URL}?user={MAIL}&token={ADS_TOKEN}&param[2313]'
-#
-# DISTRICT_API_URL = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/geolocate/address?'
-#
-# Y_LABEL_MAPPING = {
-#     "psm": "Цена за квадратный метр (руб/кв.метр)",
-#     "area": "Метраж (кв метров)"
-# }
 settings = Settings()
 logging = getLogger(__name__)
 
@@ -50,7 +39,7 @@ async def make_request(data):
 
 async def get_district(lat, lng):
     request_url = set_values(settings.DADATA_API_URL, lat=lat, lon=lng, count=1)
-    print(request_url)
+    logging.info(request_url)
 
     async with aiohttp.ClientSession() as session:
         async with session.get(request_url, headers={
@@ -58,13 +47,12 @@ async def get_district(lat, lng):
             "Authorization": f"Token {settings.ADATA_TOKEN}"
         }, verify_ssl=False) as response:
             text = await response.text()
-            # print(text)
 
             return json.loads(text).get('suggestions')[0].get('data').get('city_district')
 
 
 def create_hist(data, city_name: str, field_name: str):
-    hist_path = TMP_PATH / f'{shortuuid.uuid()}.png'  # settings.TMP_PATH / "{shortuuid.uuid()}.png"
+    hist_path = TMP_PATH / f'{shortuuid.uuid()}.png'
 
     plt.figure(figsize=(10, 10))
     plt.bar(list(data.keys()), data.values(), color='#607c8e')

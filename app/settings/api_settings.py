@@ -12,7 +12,7 @@ class APISettings(BaseSettings):
     ADS_TOKEN = os.environ.get("ADS_TOKEN")
     ADATA_TOKEN = os.environ.get("ADATA_TOKEN")
 
-    MAIL = 'Tomas-Cooper@mail.ru'
+    MAIL = os.environ.get("EMAIL")
 
     ADS_API_URL = 'https://ads-api.ru/main/api'
     DADATA_API_URL = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/geolocate/address?'
